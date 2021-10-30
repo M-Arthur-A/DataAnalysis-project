@@ -1,0 +1,8 @@
+#+TITLE: Corporate probability of default predicton
+#+DESCRIPTION: Данный .org-файл является автособираемым. В emacs сочетание клавиш `Ctrl+c > Ctrl+v > t` конвертирует данный .org-файл в ./src/model.py
+#+AUTHOR: Arthur Manzhetov
+#+PROPERTY: header-args :tangle ./src/model.py
+#+STARTUP: showeverything
+
+**Курс на GeekBrains от 15.10.2021**  
+Преподаватель - Михаил Баранов
