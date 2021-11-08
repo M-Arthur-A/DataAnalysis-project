@@ -180,7 +180,7 @@ if __name__ == '__main__':
         cols_to_save.append(c)
     df = df[cols_to_save]
 
-    # сохранение схемы данных
+    # сохранение схемы данных для последующего использования
     df.dtypes.to_csv('../data/schema.csv', sep='&')
 
     # сохранение самого датасета
