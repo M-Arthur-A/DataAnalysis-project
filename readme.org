@@ -91,69 +91,69 @@
      #+end_src
    * Создание функции анонимизации (удаление идентифицируещих данных
      #+begin_src python :tangle ./src/prepare.py
-      def anonimize(_df):
-          cols = _df.columns.to_list()
-          cols.remove('Наименование')
-          cols.remove('Код налогоплательщика')
-          return _df[cols]
+       def anonimize(_df):
+           cols = _df.columns.to_list()
+           cols.remove('Наименование')
+           cols.remove('Код налогоплательщика')
+           return _df[cols]
      #+end_src
    * Создание функции очистки данных и приведения их к числовому формату
      #+begin_src python :tangle ./src/prepare.py
-      def numerize_features(_df):
-          _df.loc[_df['Статус'] == 'В состоянии банкротства', 'Статус'] = 1
-          _df.loc[_df['Статус'] != 1, 'Статус'] = 0
-          _df.loc[_df['Сайт в сети Интернет'].isnull(), 'Сайт в сети Интернет'] = 0
-          _df.loc[_df['Сайт в сети Интернет'] != 0, 'Сайт в сети Интернет'] = 1
-          _df['Размер компании'] = _df['Размер компании'].factorize()[0]
-          _df['Вид деятельности/отрасль'] = _df['Вид деятельности/отрасль'].factorize()[0]
-          cols  = ['Статус',
-                  'Сайт в сети Интернет',
-                  'Возраст компании, лет',
-                  'ИДО',
-                  'ИФР',
-                  'ИПД',
-                  '2018, Налоги, млн RUB',
-                  '2019, Налоги, млн RUB',
-                  '2020, Налоги, млн RUB',
-                  '2018, Основные средства , млн RUB',
-                  '2019, Основные средства , млн RUB',
-                  '2020, Основные средства , млн RUB',
-                  '2018, Чистые активы, млн RUB',
-                  '2019, Чистые активы, млн RUB',
-                  '2020, Чистые активы, млн RUB',
-                  '2018, Активы  всего, млн RUB',
-                  '2019, Активы  всего, млн RUB',
-                  '2020, Активы  всего, млн RUB',
-                  '2018, Совокупный долг, млн RUB',
-                  '2019, Совокупный долг, млн RUB',
-                  '2020, Совокупный долг, млн RUB',
-                  '2018, Выручка, млн RUB',
-                  '2019, Выручка, млн RUB',
-                  '2020, Выручка, млн RUB',
-                  '2018, Прибыль (убыток) от продажи, млн RUB',
-                  '2019, Прибыль (убыток) от продажи, млн RUB',
-                  '2020, Прибыль (убыток) от продажи, млн RUB',
-                  '2018, Чистая прибыль (убыток), млн RUB',
-                  '2019, Чистая прибыль (убыток), млн RUB',
-                  '2020, Чистая прибыль (убыток), млн RUB']
+       def numerize_features(_df):
+           _df.loc[_df['Статус'] == 'В состоянии банкротства', 'Статус'] = 1
+           _df.loc[_df['Статус'] != 1, 'Статус'] = 0
+           _df.loc[_df['Сайт в сети Интернет'].isnull(), 'Сайт в сети Интернет'] = 0
+           _df.loc[_df['Сайт в сети Интернет'] != 0, 'Сайт в сети Интернет'] = 1
+           _df['Размер компании'] = _df['Размер компании'].factorize()[0]
+           _df['Вид деятельности/отрасль'] = _df['Вид деятельности/отрасль'].factorize()[0]
+           cols  = ['Статус',
+                   'Сайт в сети Интернет',
+                   'Возраст компании, лет',
+                   'ИДО',
+                   'ИФР',
+                   'ИПД',
+                   '2018, Налоги, млн RUB',
+                   '2019, Налоги, млн RUB',
+                   '2020, Налоги, млн RUB',
+                   '2018, Основные средства , млн RUB',
+                   '2019, Основные средства , млн RUB',
+                   '2020, Основные средства , млн RUB',
+                   '2018, Чистые активы, млн RUB',
+                   '2019, Чистые активы, млн RUB',
+                   '2020, Чистые активы, млн RUB',
+                   '2018, Активы  всего, млн RUB',
+                   '2019, Активы  всего, млн RUB',
+                   '2020, Активы  всего, млн RUB',
+                   '2018, Совокупный долг, млн RUB',
+                   '2019, Совокупный долг, млн RUB',
+                   '2020, Совокупный долг, млн RUB',
+                   '2018, Выручка, млн RUB',
+                   '2019, Выручка, млн RUB',
+                   '2020, Выручка, млн RUB',
+                   '2018, Прибыль (убыток) от продажи, млн RUB',
+                   '2019, Прибыль (убыток) от продажи, млн RUB',
+                   '2020, Прибыль (убыток) от продажи, млн RUB',
+                   '2018, Чистая прибыль (убыток), млн RUB',
+                   '2019, Чистая прибыль (убыток), млн RUB',
+                   '2020, Чистая прибыль (убыток), млн RUB']
 
-          for col in cols:
-              _df[col] = _df[col].astype('float64')
+           for col in cols:
+               _df[col] = _df[col].astype('float64')
 
-          for year in years:
-              _df.loc[_df[f'{year}, Среднесписочная численность работников'].isnull(), f'{year}, Среднесписочная численность работников'] = 0
+           for year in years:
+               _df.loc[_df[f'{year}, Среднесписочная численность работников'].isnull(), f'{year}, Среднесписочная численность работников'] = 0
 
-              _df.loc[_df[f'{year}, Среднесписочная численность работников']\
-                .str.contains('-', na=False), \
-                f'{year}, Среднесписочная численность работников'] = \
-              _df.loc[_df[f'{year}, Среднесписочная численность работников']\
-                .str.contains('-', na=False), \
-                f'{year}, Среднесписочная численность работников'].str.split(' - ').str[0]
+               _df.loc[_df[f'{year}, Среднесписочная численность работников']\
+                 .str.contains('-', na=False), \
+                 f'{year}, Среднесписочная численность работников'] = \
+               _df.loc[_df[f'{year}, Среднесписочная численность работников']\
+                 .str.contains('-', na=False), \
+                 f'{year}, Среднесписочная численность работников'].str.split(' - ').str[0]
 
-              _df[f'{year}, Среднесписочная численность работников'] = _df[f'{year}, Среднесписочная численность работников'].str.replace(' ', '')
+               _df[f'{year}, Среднесписочная численность работников'] = _df[f'{year}, Среднесписочная численность работников'].str.replace(' ', '')
 
-              _df[f'{year}, Среднесписочная численность работников'] = pd.to_numeric(_df[f'{year}, Среднесписочная численность работников'], errors='coerce')
-          return _df
+               _df[f'{year}, Среднесписочная численность работников'] = pd.to_numeric(_df[f'{year}, Среднесписочная численность работников'], errors='coerce')
+           return _df
      #+end_src
    * Создание функции получения даты банкротства\\
      Из значения столбца <Важная информация> выбирает дату признания банкротом из всех сообщений по компании для использования в lambda или apply
@@ -190,15 +190,16 @@
            return _df
      #+end_src
    * Создание функций выбора актуальной отчетности для обучающей выборки\\
-     Модель будет предсказывать вероятность дефолта компании, а не оперировать фактическими данными обанкротившейся компании. Для этого требуется взять отчетность компании за несколько лет до банкротства. Эти действия требуются для обучающей выборки. Для тестовой выборки эти действия не требуются. 
+     Модель будет предсказывать вероятность дефолта компании, а не оперировать фактическими данными обанкротившейся компании.\\
+     Для этого требуется взять отчетность компании за несколько лет до банкротства. Эти действия требуются для создания обучающей выборки. Для тестовой выборки эти действия не требуются.
      #+begin_src python :tangle ./src/prepare.py
        def choose_bunkruptsy_financials(_df):
            def get_cols_by_year(year: int) -> list:
                col_financials = []
                for col in _df.columns.tolist():
-                   if ',' in col and not 'Среднесписочная' in col:
+                   if ',' in col:
                        col_year = col.split(',')[0]
-                       if str(col_year) == str(year):  # int(col_year)-1 == int(year)
+                       if str(col_year) == str(year):
                            col_financials.append(col)
                return col_financials
 
@@ -210,12 +211,35 @@
            # удаление "старых" банкротств, где не будет совсем никакой динамики
            _df = _df.drop(_df.loc[(_df['b_date'].notnull()) & (_df['b_year_threshold'] == 2013)].index)
            # добавление current и previos отчетности за 2 года до банкротства
-           for i, row in _df.loc[_df['b_date'].notnull()].iterrows():
-             year = row['b_year_threshold']
-              for col in get_cols_by_year(year):
-                  _df[i, 'cur_'+ col.split(',')[1]] = row[col]
-              for col in get_cols_by_year(year-1):
-                  _df[i, 'prev_'+ col.split(',')[1]] = row[col]
+           bankrupts_filter = _df['b_date'].notnull()
+           thresholds = _df.loc[bankrupts_filter, 'b_year_threshold'].value_counts().index.tolist()
+           for year in thresholds:
+               year_filter = _df['b_year_threshold'] == year
+               for col in get_cols_by_year(year):
+                   _df.loc[bankrupts_filter & year_filter, 'cur_' + col.split(', ')[1]] = _df.loc[bankrupts_filter & year_filter, col]
+               for col in get_cols_by_year(year-1):
+                   _df.loc[bankrupts_filter & year_filter, 'prev_'+ col.split(', ')[1]] = _df.loc[bankrupts_filter & year_filter, col]
+           return _df
+
+       def choose_financials(_df, training=False, years=years):
+           def get_cols_by_year(year: int) -> list:
+               col_financials = []
+               for col in _df.columns.tolist():
+                   if ',' in col:
+                       col_year = col.split(',')[0]
+                       if str(col_year) == str(year):
+                           col_financials.append(col)
+               return col_financials
+           if training:
+               bankrupts_filter = _df['b_date'].notnull()
+               filter_df = ~bankrupts_filter    # только живые компании
+           else:
+               filter_df = _df.index.notnull()  # все компании
+           for year in years:
+               for col in get_cols_by_year(year):
+                   _df.loc[filter_df, 'cur_' + col.split(', ')[1]] = _df.loc[filter_df, col]
+               for col in get_cols_by_year(year-1):
+                   _df.loc[filter_df, 'prev_'+ col.split(', ')[1]] = _df.loc[filter_df, col]
            return _df
      #+end_src
    * Загрузка датасетов и их объединение в один; применение к ним написанных ранее функций
@@ -236,10 +260,23 @@
 ** Сохранение результирующего датасета
    * сохранение схемы данных для последующего использования
      #+begin_src python :tangle ./src/prepare.py
-       df.dtypes.to_csv('../data/schema.csv', sep='&')
-     #+end_src
-   * сохранение самого датасета
-     #+begin_src python :tangle ./src/prepare.py
-       df.to_csv('../data/dataset.csv', sep='&')
+       if __name__ == '__main__':
+           # обрезка ненужных колонок
+           cols = df.columns.tolist()
+           cols[1] = cols[1].replace(', лет', '')
+           df.columns = cols
+           cols_to_save = []
+           check = [', ', 'b', '№', 'ИДО', 'ИФР', 'ИПД', 'Регистрационный номер', 'Мои списки', 'Реестры СПАРКа', 'Важная информация']
+           for c in cols:
+               if any(ext in c for ext in check):
+                   continue
+               cols_to_save.append(c)
+           df = df[cols_to_save]
+
+           # сохранение схемы данных
+           df.dtypes.to_csv('../data/schema.csv', sep='&')
+
+           # сохранение самого датасета
+           df.to_csv('../data/dataset.csv', sep='&', index=False)
      #+end_src
 * Построение модели данных
