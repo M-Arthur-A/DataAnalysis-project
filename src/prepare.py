@@ -152,20 +152,22 @@ def choose_financials(_df, training=False, years=years):
             _df.loc[filter_df, 'prev_'+ col.split(', ')[1]] = _df.loc[filter_df, col]
     return _df
 
-df = pd.concat([pd.read_excel(path_1, header=3, dtype=str).iloc[:-2], 
-                pd.read_excel(path_2, header=3, dtype=str).iloc[:-2],
-                pd.read_excel(path_3, header=3, dtype=str).iloc[:-2]])
-df = df.reset_index().iloc[:,2:]
-b_df = pd.read_excel(path_4, header=3, dtype=str).iloc[:-2]
-b_df = get_bankruptsy_date(_df)
-cols_to_merge = ['Код налогоплательщика'] + b_df.columns.difference(df.columns).tolist()
-df = df.merge(b_df[cols_to_merge], on='Код налогоплательщика', how='left')
-df = choose_bunkruptsy_financials(df)
-df = choose_financials(df, training=True)
-df = anonimize(df)
-df = numerize_features(df)
+def prepare_train_dataset():
+    df = pd.concat([pd.read_excel(path_1, header=3, dtype=str).iloc[:-2], 
+                    pd.read_excel(path_2, header=3, dtype=str).iloc[:-2],
+                    pd.read_excel(path_3, header=3, dtype=str).iloc[:-2]])
+    df = df.reset_index().iloc[:,2:]
+    b_df = pd.read_excel(path_4, header=3, dtype=str).iloc[:-2]
+    b_df = get_bankruptsy_date(_df)
+    cols_to_merge = ['Код налогоплательщика'] + b_df.columns.difference(df.columns).tolist()
+    df = df.merge(b_df[cols_to_merge], on='Код налогоплательщика', how='left')
+    df = choose_bunkruptsy_financials(df)
+    df = choose_financials(df, training=True)
+    df = anonimize(df)
+    df = numerize_features(df)
 
 if __name__ == '__main__':
+    df = prepare_train_dataset()
     # обрезка ненужных колонок
     cols = df.columns.tolist()
     cols[1] = cols[1].replace(', лет', '')

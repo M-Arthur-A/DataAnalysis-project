@@ -89,7 +89,7 @@
        years = [2018, 2019, 2020]
        years_b = [2013, 2014, 2015, 2016, 2017]
      #+end_src
-   * Создание функции анонимизации (удаление идентифицируещих данных
+   * Функция анонимизации (удаление идентифицируещих данных
      #+begin_src python :tangle ./src/prepare.py
        def anonimize(_df):
            cols = _df.columns.to_list()
@@ -97,7 +97,7 @@
            cols.remove('Код налогоплательщика')
            return _df[cols]
      #+end_src
-   * Создание функции очистки данных и приведения их к числовому формату
+   * Функция очистки данных и приведения их к числовому формату
      #+begin_src python :tangle ./src/prepare.py
        def numerize_features(_df):
            _df.loc[_df['Статус'] == 'В состоянии банкротства', 'Статус'] = 1
@@ -155,7 +155,7 @@
                _df[f'{year}, Среднесписочная численность работников'] = pd.to_numeric(_df[f'{year}, Среднесписочная численность работников'], errors='coerce')
            return _df
      #+end_src
-   * Создание функции получения даты банкротства\\
+   * Функция получения даты банкротства\\
      Из значения столбца <Важная информация> выбирает дату признания банкротом из всех сообщений по компании для использования в lambda или apply
      #+begin_src python :tangle ./src/prepare.py
        def get_bankruptsy_date(_df):
@@ -189,7 +189,7 @@
            print('Дата банкротства получена')
            return _df
      #+end_src
-   * Создание функций выбора актуальной отчетности для обучающей выборки\\
+   * Функция выбора актуальной отчетности для обучающей выборки\\
      Модель будет предсказывать вероятность дефолта компании, а не оперировать фактическими данными обанкротившейся компании.\\
      Для этого требуется взять отчетность компании за несколько лет до банкротства. Эти действия требуются для создания обучающей выборки. Для тестовой выборки эти действия не требуются.
      #+begin_src python :tangle ./src/prepare.py
@@ -242,25 +242,28 @@
                    _df.loc[filter_df, 'prev_'+ col.split(', ')[1]] = _df.loc[filter_df, col]
            return _df
      #+end_src
-   * Загрузка датасетов и их объединение в один; применение к ним написанных ранее функций
+   * Функция загрузки датасетов и их объединение в один\\
+     Применение к полученному датасету написанные ранее функции
      #+begin_src python :tangle ./src/prepare.py
-       df = pd.concat([pd.read_excel(path_1, header=3, dtype=str).iloc[:-2], 
-                       pd.read_excel(path_2, header=3, dtype=str).iloc[:-2],
-                       pd.read_excel(path_3, header=3, dtype=str).iloc[:-2]])
-       df = df.reset_index().iloc[:,2:]
-       b_df = pd.read_excel(path_4, header=3, dtype=str).iloc[:-2]
-       b_df = get_bankruptsy_date(_df)
-       cols_to_merge = ['Код налогоплательщика'] + b_df.columns.difference(df.columns).tolist()
-       df = df.merge(b_df[cols_to_merge], on='Код налогоплательщика', how='left')
-       df = choose_bunkruptsy_financials(df)
-       df = choose_financials(df, training=True)
-       df = anonimize(df)
-       df = numerize_features(df)
+       def prepare_train_dataset():
+           df = pd.concat([pd.read_excel(path_1, header=3, dtype=str).iloc[:-2], 
+                           pd.read_excel(path_2, header=3, dtype=str).iloc[:-2],
+                           pd.read_excel(path_3, header=3, dtype=str).iloc[:-2]])
+           df = df.reset_index().iloc[:,2:]
+           b_df = pd.read_excel(path_4, header=3, dtype=str).iloc[:-2]
+           b_df = get_bankruptsy_date(_df)
+           cols_to_merge = ['Код налогоплательщика'] + b_df.columns.difference(df.columns).tolist()
+           df = df.merge(b_df[cols_to_merge], on='Код налогоплательщика', how='left')
+           df = choose_bunkruptsy_financials(df)
+           df = choose_financials(df, training=True)
+           df = anonimize(df)
+           df = numerize_features(df)
      #+end_src
 ** Сохранение результирующего датасета
-   * сохранение схемы данных для последующего использования
+   сохранение схемы данных для последующего использования
      #+begin_src python :tangle ./src/prepare.py
        if __name__ == '__main__':
+           df = prepare_train_dataset()
            # обрезка ненужных колонок
            cols = df.columns.tolist()
            cols[1] = cols[1].replace(', лет', '')
