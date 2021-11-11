@@ -23,53 +23,17 @@ def numerize_features(_df):
     _df.loc[_df['Сайт в сети Интернет'] != 0, 'Сайт в сети Интернет'] = 1
     _df['Размер компании'] = _df['Размер компании'].factorize()[0]
     _df['Вид деятельности/отрасль'] = _df['Вид деятельности/отрасль'].factorize()[0]
-    cols  = ['Статус',
-            'Сайт в сети Интернет',
-            'Возраст компании, лет',
-            'ИДО',
-            'ИФР',
-            'ИПД',
-            '2018, Налоги, млн RUB',
-            '2019, Налоги, млн RUB',
-            '2020, Налоги, млн RUB',
-            '2018, Основные средства , млн RUB',
-            '2019, Основные средства , млн RUB',
-            '2020, Основные средства , млн RUB',
-            '2018, Чистые активы, млн RUB',
-            '2019, Чистые активы, млн RUB',
-            '2020, Чистые активы, млн RUB',
-            '2018, Активы  всего, млн RUB',
-            '2019, Активы  всего, млн RUB',
-            '2020, Активы  всего, млн RUB',
-            '2018, Совокупный долг, млн RUB',
-            '2019, Совокупный долг, млн RUB',
-            '2020, Совокупный долг, млн RUB',
-            '2018, Выручка, млн RUB',
-            '2019, Выручка, млн RUB',
-            '2020, Выручка, млн RUB',
-            '2018, Прибыль (убыток) от продажи, млн RUB',
-            '2019, Прибыль (убыток) от продажи, млн RUB',
-            '2020, Прибыль (убыток) от продажи, млн RUB',
-            '2018, Чистая прибыль (убыток), млн RUB',
-            '2019, Чистая прибыль (убыток), млн RUB',
-            '2020, Чистая прибыль (убыток), млн RUB']
+    _df['Налоговый режим'] = _df['Налоговый режим'].factorize()[0]
 
-    for col in cols:
+    for year in ['cur', 'prev']:
+        col_name = f'{year}_Среднесписочная численность работников'
+        _df.loc[_df[col_name].isnull(), col_name] = 0
+        _df.loc[_df[col_name].str.contains('-', na=False), col_name] = _df.loc[_df[col_name].str.contains('-', na=False), col_name].str.split(' - ').str[0]
+        _df[col_name] = _df[col_name].str.replace(' ', '')
+        _df[col_name] = pd.to_numeric(_df[col_name], errors='coerce')
+
+    for col in _df.columns.tolist():
         _df[col] = _df[col].astype('float64')
-
-    for year in years:
-        _df.loc[_df[f'{year}, Среднесписочная численность работников'].isnull(), f'{year}, Среднесписочная численность работников'] = 0
-
-        _df.loc[_df[f'{year}, Среднесписочная численность работников']\
-          .str.contains('-', na=False), \
-          f'{year}, Среднесписочная численность работников'] = \
-        _df.loc[_df[f'{year}, Среднесписочная численность работников']\
-          .str.contains('-', na=False), \
-          f'{year}, Среднесписочная численность работников'].str.split(' - ').str[0]
-
-        _df[f'{year}, Среднесписочная численность работников'] = _df[f'{year}, Среднесписочная численность работников'].str.replace(' ', '')
-
-        _df[f'{year}, Среднесписочная численность работников'] = pd.to_numeric(_df[f'{year}, Среднесписочная численность работников'], errors='coerce')
     return _df
 
 def get_bankruptsy_date(_df):
@@ -164,21 +128,11 @@ def prepare_train_dataset():
     df = choose_bunkruptsy_financials(df)
     df = choose_financials(df, training=True)
     df = anonimize(df)
+    df = clean_df(df)
     df = numerize_features(df)
 
 if __name__ == '__main__':
     df = prepare_train_dataset()
-    # обрезка ненужных колонок
-    cols = df.columns.tolist()
-    cols[1] = cols[1].replace(', лет', '')
-    df.columns = cols
-    cols_to_save = []
-    check = [', ', 'b', '№', 'ИДО', 'ИФР', 'ИПД', 'Регистрационный номер', 'Мои списки', 'Реестры СПАРКа', 'Важная информация']
-    for c in cols:
-        if any(ext in c for ext in check):
-            continue
-        cols_to_save.append(c)
-    df = df[cols_to_save]
 
     # сохранение схемы данных для последующего использования
     df.dtypes.to_csv('../data/schema.csv', sep='&')
