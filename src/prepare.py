@@ -33,7 +33,8 @@ def numerize_features(_df):
         _df[col_name] = pd.to_numeric(_df[col_name], errors='coerce')
 
     for col in _df.columns.tolist():
-        _df[col] = _df[col].astype('float64')
+        if col != 'Статус':
+            _df[col] = _df[col].astype('float64')
     return _df
 
 def get_bankruptsy_date(_df):
