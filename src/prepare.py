@@ -117,6 +117,18 @@ def choose_financials(_df, training=False, years=years):
             _df.loc[filter_df, 'prev_'+ col.split(', ')[1]] = _df.loc[filter_df, col]
     return _df
 
+def clean_df(_df):
+    cols = _df.columns.tolist()
+    cols[1] = cols[1].replace(', лет', '')
+    _df.columns = cols
+    cols_to_save = []
+    check = [', ', 'b', '№', 'ИДО', 'ИФР', 'ИПД', 'Регистрационный номер', 'Мои списки', 'Реестры СПАРКа', 'Важная информация']
+    for c in cols:
+        if any(ext in c for ext in check):
+            continue
+        cols_to_save.append(c)
+    return _df[cols_to_save]
+
 def prepare_train_dataset():
     df = pd.concat([pd.read_excel(path_1, header=3, dtype=str).iloc[:-2], 
                     pd.read_excel(path_2, header=3, dtype=str).iloc[:-2],
