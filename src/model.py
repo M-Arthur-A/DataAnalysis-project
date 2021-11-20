@@ -2,11 +2,10 @@ import pandas as pd
 import numpy as np
 import xgboost as xgb
 from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
-from sklearn.metrics import r2_score
 import dill
 
 # Утилиты
-def col_name(short_name, _df=_df):
+def col_name(short_name, _df):
     return [name for name in _df.columns if short_name in name]
 
 # Основыне функции
@@ -82,6 +81,10 @@ def model_backup(_model):
     with open('./model/model.pkl', 'wb') as file:
         dill.dump(_model, file)
     print('DONE - model saved.')
+
+def model_load():
+    with open('./model/model.pkl', 'rb') as m:
+        return dill.load(m)
 
 if __name__ == '__main__':
      df = pd.read_csv(path_dataset, sep='&')
