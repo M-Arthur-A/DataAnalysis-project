@@ -22,7 +22,10 @@
   - [[#применение-функций-и-получение-результата][Применение функций и получение результата]]
 - [[#оценка-результата][Оценка результата]]
   - [[#feature_importance][feature_importance]]
+    - [[#feature-importance-table][feature importance table]]
+    - [[#feature-importance-f-score][feature-importance f-score]]
   - [[#correlation-matrix][correlation matrix]]
+    - [[#correlation-matrix-graph][correlation matrix graph]]
   - [[#evaluating][evaluating]]
     - [[#r2][R2]]
     - [[#accuracy][Accuracy]]
@@ -387,8 +390,7 @@
                              model.feature_importances_.tolist())), \
                     columns=['feature', 'importance'])
      #+end_src
-
-     #+RESULTS:
+*** feature importance table
       [[./media/feat_importance.png]]
 
      #+begin_src python
@@ -396,7 +398,7 @@
        xgb.plot_importance(model, max_num_features=50, height=0.5, ax=ax)
      #+end_src
 
-     #+RESULTS:
+*** feature-importance f-score
      [[./media/f-score.png]]
 ** correlation matrix
      #+begin_src python
@@ -414,8 +416,7 @@
        fig = sns.heatmap(corr_matrix, annot=True, linewidths=1, fmt='.2f')
        fig.get_figure().savefig('./media/cormatrix.png')
      #+end_src
-     
-     #+RESULTS:
+*** correlation matrix graph
      [[./media/cormatrix.png]]
 ** evaluating
    Перевод вероятностей в бинарные предсказания:
@@ -429,7 +430,7 @@
        r2_score(y_test, binary_answers)
      #+end_src
 
-     #+RESULTS:
+     Результаты:
      =0.9838153187177718=
 *** Accuracy
     доля верно классифицированных объектов относительно общего количества объектов
@@ -438,7 +439,7 @@
        accuracy_score(y_test, binary_answers)
      #+end_src
 
-     #+RESULTS:
+     Результаты:
      =0.9927770093745197=
 *** Precision & recall, fscore, roc-auc, confusion matrix
      #+begin_src python
@@ -546,8 +547,8 @@ True_neg  = {TNR:.3f}\n')
        
        get_scores(y_test, binary_answers)
      #+end_src
-     
-     #+RESULTS:
+
+     Результаты:
      #+begin_src
        Confusion matrix, without normalization
         [4961    9]
